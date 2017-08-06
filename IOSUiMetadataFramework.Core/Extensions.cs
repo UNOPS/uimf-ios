@@ -1,5 +1,7 @@
 ﻿namespace IOSUiMetadataFramework.Core
 {
+	using System;
+	using System.Drawing;
 	using UIKit;
 
 	public static class Extensions
@@ -45,6 +47,34 @@
 
 			parent.AddConstraint(
 				NSLayoutConstraint.Create(view, NSLayoutAttribute.Height, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 0, height)
+			);
+		}
+
+
+		public static DateTime NSDateToDateTime(this Foundation.NSDate date)
+		{
+			DateTime reference = new DateTime(2001, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			var utcDateTime = reference.AddSeconds(date.SecondsSinceReferenceDate);
+			return utcDateTime.ToLocalTime();
+		}
+
+		public static Foundation.NSDate DateTimeToNSDate(this DateTime date)
+		{
+			DateTime reference = new DateTime(2001, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			var utcDateTime = date.ToUniversalTime();
+			return Foundation.NSDate.FromTimeIntervalSinceReferenceDate((utcDateTime - reference).TotalSeconds);
+		}
+
+		public static PointF Rotate(this PointF pt)
+		{
+			return new PointF(pt.Y, pt.X);
+		}
+
+		public static PointF Center(this RectangleF rect)
+		{
+			return new PointF(
+				(rect.Right - rect.Left) / 2.0f,
+				(rect.Bottom - rect.Top) / 2.0f
 			);
 		}
 	}

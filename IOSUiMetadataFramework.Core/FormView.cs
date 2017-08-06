@@ -7,7 +7,7 @@
 	using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Managers;
 	using MediatR;
-	using Newtonsoft.Json.Linq;
+	using Newtonsoft.Json;
 	using UiMetadataFramework.Core;
 	using UiMetadataFramework.MediatR;
 	using UIKit;
@@ -42,19 +42,43 @@
 		private IMediator Mediator { get; }
 		private OutputManagerCollection OutputManagerCollection { get; }
 		private UIView ViewController { get; }
-		
+
 		public async Task<Layout> StartIForm(Type form, IDictionary<string, object> inputFieldValues = null)
 		{
 			this.FormMetadata = this.FormRegister.GetFormInfo(form.FullName)?.Metadata;
 			this.InputFieldValues = inputFieldValues;
-			return await this.StartIForm();
+			var layout = await this.StartIForm();
+			if (layout != null)
+			{
+				this.ViewController.RemoveAllViews();
+				this.ViewController.AddSubview(layout.View);
+				this.ViewController.AddConstraints(layout.Constraints);
+				this.AppLayouts.Add(layout);
+			}
+			return layout;
+		}
+
+		public async Task<Layout> GetIForm(string form, IDictionary<string, object> inputFieldValues = null)
+		{
+			this.FormMetadata = this.FormRegister.GetFormInfo(form)?.Metadata;
+			this.InputFieldValues = inputFieldValues;
+			var layout = await this.StartIForm();
+			return layout;
 		}
 
 		public async Task<Layout> StartIForm(string form, IDictionary<string, object> inputFieldValues = null)
 		{
 			this.FormMetadata = this.FormRegister.GetFormInfo(form)?.Metadata;
 			this.InputFieldValues = inputFieldValues;
-			return await this.StartIForm();
+			var layout = await this.StartIForm();
+			if (layout != null)
+			{
+				this.ViewController.RemoveAllViews();
+				this.ViewController.AddSubview(layout.View);
+				this.ViewController.AddConstraints(layout.Constraints);
+				this.AppLayouts.Add(layout);
+			}
+			return layout;
 		}
 
 		public async Task<Layout> StartIForm()
@@ -62,13 +86,6 @@
 			try
 			{
 				var layout = await this.DrawIFormAsync();
-				if (layout != null)
-				{
-					this.ViewController.RemoveAllViews();
-					this.ViewController.AddSubview(layout.View);
-					this.ViewController.AddConstraints(layout.Constraints);
-					this.AppLayouts.Add(layout);
-				}
 				return layout;
 			}
 			catch (Exception ex)
@@ -152,7 +169,7 @@
 
 				var manager = this.InputManagerCollection.GetManager(input.Type);
 
-				var view = manager.GetView(this.ViewController);
+				var view = manager.GetView(input.CustomProperties);
 				var value = this.InputFieldValues?.SingleOrDefault(a => a.Key.Equals(input.Id)).Value;
 				if (value != null)
 				{
@@ -209,17 +226,16 @@
 
 		private object GetFormValues()
 		{
-			var jsonObject = new JObject();
-
+			var list = new Dictionary<string, object>();
 			foreach (var inputManager in this.InputsManager)
 			{
 				var value = inputManager.Manager.GetValue();
 				if (value != null)
 				{
-					jsonObject.Add(inputManager.Input.Id, value.ToString());
+					list.Add(inputManager.Input.Id, value);
 				}
 			}
-			return jsonObject;
+			return JsonConvert.SerializeObject(list);
 		}
 
 		private async Task<InvokeForm.Response> HandelForm()

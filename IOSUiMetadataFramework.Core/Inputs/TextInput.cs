@@ -10,7 +10,7 @@
 	{
 		private UITextField InputText { get; set; }
 
-		public UIView GetView(UIView viewController)
+		public UIView GetView(object inputCustomPropertiesr)
 		{
 			this.InputText = new UITextField();
 			this.InputText.Layer.CornerRadius = 8;

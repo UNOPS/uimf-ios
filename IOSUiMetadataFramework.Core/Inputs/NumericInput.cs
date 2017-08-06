@@ -11,7 +11,7 @@
 	{
 		private UITextField InputText { get; set; }
 
-		public UIView GetView(UIView viewController)
+		public UIView GetView(object inputCustomProperties)
 		{
 			this.InputText = new UITextField { KeyboardType = UIKeyboardType.NumberPad };
 			this.InputText.Layer.CornerRadius = 8;

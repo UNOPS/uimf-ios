@@ -78,6 +78,7 @@
     <Compile Include="Outputs\FormLinkOutput.cs" />
     <Compile Include="Outputs\NumericOutput.cs" />
     <Compile Include="Outputs\TableOutput.cs" />
+    <Compile Include="Outputs\TapstripOutput.cs" />
     <Compile Include="Outputs\TextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
