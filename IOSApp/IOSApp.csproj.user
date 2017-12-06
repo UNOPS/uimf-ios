@@ -2,6 +2,6 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SelectedDevice>Simulator</SelectedDevice>
-    <DefaultDevice>iPhone 7 iOS 10.3</DefaultDevice>
+    <DefaultDevice>iPhone 7 iOS 11.1</DefaultDevice>
   </PropertyGroup>
 </Project>

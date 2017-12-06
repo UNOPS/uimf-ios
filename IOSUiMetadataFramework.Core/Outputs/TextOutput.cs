@@ -1,8 +1,10 @@
 ﻿namespace IOSUiMetadataFramework.Core.Outputs
 {
-	using CoreGraphics;
+    using System.Collections.Generic;
+    using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
+	using UiMetadataFramework.Core;
 	using UIKit;
 
 	[Output(Type = "text")]
@@ -10,13 +12,18 @@
 	{
 		private UITextView OutputText { get; set; }
 
-		public UIView GetView(UIView viewController, string name, object value, FormView formView, int yAxis)
+		public UIView GetView(OutputFieldMetadata outputField,
+		    object value,
+		    MyFormHandler myFormHandler,
+		    FormMetadata formMetadata,
+		    List<MyFormHandler.FormInputManager> inputsManager,
+		    int yAxis)
 		{
 			this.OutputText = new UITextView();
 			if (value != null)
 			{
-				this.OutputText.Text = name + ": " + value;
-				var labelSize = new CGSize(viewController.Frame.Width - 40, 30);
+				this.OutputText.Text = outputField.Label + ": " + value;
+				var labelSize = new CGSize(UIScreen.MainScreen.Bounds.Width - 40, 30);
 				this.OutputText.Frame = new CGRect(new CGPoint(20, yAxis), labelSize);
 			}
 			return this.OutputText;

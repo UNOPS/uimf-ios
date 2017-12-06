@@ -4,7 +4,7 @@
 
 	public interface IInputManager
 	{
-		UIView GetView(object inputCustomProperties);
+		UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler);
 		object GetValue();
 		void SetValue(object value);
 	}

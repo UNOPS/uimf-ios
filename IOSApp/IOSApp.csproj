@@ -84,18 +84,61 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Main.cs" />
-    <Compile Include="AppDelegate.cs" />
-    <None Include="GettingStarted.Xamarin" />
-    <None Include="Info.plist" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ViewController.designer.cs">
+    <Compile Include="Controller\BaseController.cs" />
+    <Compile Include="Controller\BaseController.designer.cs">
+      <DependentUpon>BaseController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\IntroController.cs" />
+    <Compile Include="Controller\IntroController.designer.cs">
+      <DependentUpon>IntroController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\ViewController.cs" />
+    <Compile Include="Controller\ViewController.designer.cs">
       <DependentUpon>ViewController.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewController.cs" />
+    <Compile Include="CustomFormWrapper.cs" />
+    <Compile Include="InstallmentList.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <InterfaceDefinition Include="Controller\SideMenuController.xib">
+      <DependentUpon>SideMenuController.cs</DependentUpon>
+    </InterfaceDefinition>
+    <None Include="GettingStarted.Xamarin" />
+    <None Include="Info.plist" />
+    <Compile Include="MenuMetadata.cs" />
+    <Compile Include="MyForms.cs" />
+    <Compile Include="Controller\NavController.cs" />
+    <Compile Include="Controller\NavController.designer.cs">
+      <DependentUpon>NavController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <InterfaceDefinition Include="Controller\IntroController.xib">
+      <DependentUpon>IntroController.cs</DependentUpon>
+    </InterfaceDefinition>
+    <None Include="packages.config" />
+    <InterfaceDefinition Include="Controller\NavController.xib">
+      <DependentUpon>NavController.cs</DependentUpon>
+    </InterfaceDefinition>
+    <InterfaceDefinition Include="Controller\RootViewController.xib">
+      <DependentUpon>RootViewController.cs</DependentUpon>
+    </InterfaceDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controller\RootViewController.cs" />
+    <Compile Include="Controller\RootViewController.designer.cs">
+      <DependentUpon>RootViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\SideMenuController.cs" />
+    <Compile Include="Controller\SideMenuController.designer.cs">
+      <DependentUpon>SideMenuController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\ViewControllerWithoutApi.designer.cs">
+      <DependentUpon>ViewControllerWithoutApi.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controller\ViewControllerWithoutApi.cs" />
+    <InterfaceDefinition Include="Controller\ViewController.xib">
+      <DependentUpon>ViewController.cs</DependentUpon>
+    </InterfaceDefinition>
     <InterfaceDefinition Include="Main.storyboard" />
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
   </ItemGroup>
@@ -111,7 +154,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.IO.Compression" />
@@ -121,19 +164,23 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="UiMetadataFramework.Basic, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UiMetadataFramework.Basic.0.0.3-beta\lib\netstandard1.6\UiMetadataFramework.Basic.dll</HintPath>
+    <Reference Include="UiMetadataFramework.Basic, Version=0.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UiMetadataFramework.Basic.0.0.11-beta\lib\netstandard2.0\UiMetadataFramework.Basic.dll</HintPath>
     </Reference>
-    <Reference Include="UiMetadataFramework.Core, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UiMetadataFramework.Core.0.0.3-beta\lib\netstandard1.6\UiMetadataFramework.Core.dll</HintPath>
+    <Reference Include="UiMetadataFramework.Core, Version=0.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UiMetadataFramework.Core.0.0.11-beta\lib\netstandard2.0\UiMetadataFramework.Core.dll</HintPath>
     </Reference>
-    <Reference Include="UiMetadataFramework.MediatR, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UiMetadataFramework.MediatR.0.0.1-beta\lib\netstandard1.6\UiMetadataFramework.MediatR.dll</HintPath>
+    <Reference Include="UiMetadataFramework.MediatR, Version=0.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UiMetadataFramework.MediatR.0.0.11-beta\lib\netstandard2.0\UiMetadataFramework.MediatR.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin-Sidebar-Unified, Version=1.0.6492.38920, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SidebarNavigation.1.9.4\lib\Xamarin.iOS10\Xamarin-Sidebar-Unified.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entitlements.plist" />
+    <BundleResource Include="Resources\threelines.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\App.Core\App.Core.csproj">

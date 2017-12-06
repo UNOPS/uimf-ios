@@ -4,14 +4,14 @@
 // actions declared in your storyboard file.
 // Manual changes to this file will not be maintained.
 //
-using Foundation;
-using System;
-using System.CodeDom.Compiler;
 
-namespace IOSApp
+namespace IOSApp.Controller
 {
-    [Register ("ViewController")]
-    partial class ViewController
+    using System.CodeDom.Compiler;
+    using Foundation;
+
+    [Register ("ViewControllerWithoutApi")]
+    partial class ViewControllerWithoutApi
     {
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -19,9 +19,9 @@ namespace IOSApp
 
         void ReleaseDesignerOutlets ()
         {
-            if (NavBar != null) {
-                NavBar.Dispose ();
-                NavBar = null;
+            if (this.NavBar != null) {
+                this.NavBar.Dispose ();
+                this.NavBar = null;
             }
         }
     }

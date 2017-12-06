@@ -1,7 +1,15 @@
 ﻿namespace IOSUiMetadataFramework.Core
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Drawing;
+	using System.Threading.Tasks;
+	using Foundation;
+	using IOSUiMetadataFramework.Core.Model;
+	using Newtonsoft.Json;
+	using Newtonsoft.Json.Linq;
+	using UiMetadataFramework.Basic.Input.Typeahead;
+	using UiMetadataFramework.MediatR;
 	using UIKit;
 
 	public static class Extensions
@@ -77,5 +85,65 @@
 				(rect.Bottom - rect.Top) / 2.0f
 			);
 		}
-	}
+
+	    public static T CastTObject<T>(this object obj)
+	    {
+	        if (obj.GetType() == typeof(JObject))
+	        {
+	            return JsonConvert.DeserializeObject<T>(obj.ToString());
+	        }
+	        if (obj.GetType() == typeof(JValue))
+	        {
+	            return ((JValue)obj).ToObject<T>();
+	        }
+	        if (obj.GetType() == typeof(JArray))
+	        {
+	            return ((JArray)obj).ToObject<T>();
+	        }
+	        return (T)obj;
+	    }
+
+	    public static void AdjustLabelSize(this UITextView label,nfloat width, float maxHeight = 100f)
+	    {
+	        var size = ((NSString)label.Text).StringSize(label.Font, constrainedToSize: new SizeF((float)width, maxHeight),
+	            lineBreakMode: UILineBreakMode.WordWrap);
+	        var labelFrame = label.Frame;
+	        labelFrame.Size = new SizeF((float)width, (float)size.Height+15);
+	        label.Frame = labelFrame;
+	    }
+
+	    public static IEnumerable<object> GetTypeaheadSource(this TypeaheadCustomProperties customProperties, MyFormHandler myFormHandler)
+	    {
+	        if (customProperties.Source is string)
+	        {
+	            var dataSource = customProperties.Source.ToString();
+	            var request = new InvokeForm.Request
+	            {
+	                Form = dataSource
+	            };
+	            var result = Task.Run(
+	                () => myFormHandler.InvokeFormAsync(new[] { request }, false));
+
+	            var response = result.Result;
+	            var typeahead = response[0].Data.CastTObject<TypeaheadResponse<object>>();
+	            if (typeahead != null)
+	            {
+	                return typeahead.Items;
+	            }
+	        }
+	        else
+	        {
+	            return (IEnumerable<object>)customProperties.Source;
+
+	        }
+	        return new List<object>();
+	    }
+
+	    public static void SetTextBorders(this UITextField textField)
+	    {
+	        textField.Layer.CornerRadius = 8;
+	        textField.Layer.BorderColor = UIColor.LightGray.CGColor;
+	        textField.Layer.BorderWidth = 1;
+        }
+    }
 }

@@ -11,13 +11,11 @@
 	{
 		private UITextField InputText { get; set; }
 
-		public UIView GetView(object inputCustomProperties)
+		public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
 		{
 			this.InputText = new UITextField { KeyboardType = UIKeyboardType.NumberPad };
-			this.InputText.Layer.CornerRadius = 8;
-			this.InputText.Layer.BorderColor = UIColor.LightGray.CGColor;
-			this.InputText.Layer.BorderWidth = 1;
-			UIView paddingView = new UIView(new CGRect(0, 0, 10, 20));
+		    this.InputText.SetTextBorders();			
+			var paddingView = new UIView(new CGRect(0, 0, 10, 20));
 			this.InputText.LeftView = paddingView;
 			this.InputText.LeftViewMode = UITextFieldViewMode.Always;
 

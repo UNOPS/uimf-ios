@@ -1,33 +1,33 @@
-﻿namespace IOSApp
+﻿namespace IOSApp.Controller
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Reflection;
-	using App.Core;
-	using Autofac;
-	using IOSUiMetadataFramework.Core;
-	using IOSUiMetadataFramework.Core.Inputs;
-	using IOSUiMetadataFramework.Core.Managers;
-	using IOSUiMetadataFramework.Core.Outputs;
-	using MediatR;
-	using MediatR.Pipeline;
-	using UiMetadataFramework.Basic.Output;
-	using UiMetadataFramework.Core.Binding;
-	using UiMetadataFramework.MediatR;
-	using UIKit;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using App.Core;
+    using Autofac;
+    using IOSUiMetadataFramework.Core;
+    using IOSUiMetadataFramework.Core.Inputs;
+    using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Outputs;
+    using MediatR;
+    using MediatR.Pipeline;
+    using UiMetadataFramework.Basic.Output;
+    using UiMetadataFramework.Core.Binding;
+    using UiMetadataFramework.MediatR;
+    using UIKit;
 
-	public partial class ViewController : UIViewController
+    public partial class ViewControllerWithoutApi : UIViewController
 	{
 		public List<Layout> AppLayouts = new List<Layout>();
 
-		public ViewController(IntPtr handle) : base(handle)
+		public ViewControllerWithoutApi(IntPtr handle) : base(handle)
 		{
 		}
 
 		private IContainer Container { get; set; }
 		private FormRegister FormRegister { get; set; }
-		private FormView FormView { get; set; }
+		private MyFormHandler MyFormHandler { get; set; }
 		private InputManagerCollection InputManager { get; set; }
 		private OutputManagerCollection OutputManager { get; set; }
 
@@ -59,8 +59,7 @@
 
 			this.DrawMainScreen(formsView);			
 
-			this.FormView = new FormView(formsView, this.Container.Resolve<IMediator>(), this.FormRegister, this.InputManager, this.OutputManager,
-				this.AppLayouts);
+			this.MyFormHandler = new MyFormHandler(this.Container.Resolve<IMediator>(), this.FormRegister, this.InputManager, this.OutputManager);
 			
 			var backButton = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, (sender, args) =>
 			{
@@ -86,7 +85,7 @@
 			var btn = new UIButton();
 			btn.SetTitle("Do Magic", UIControlState.Normal);
 			btn.BackgroundColor = UIColor.Gray;
-			btn.TouchUpInside += async (sender, args) => { await this.FormView.StartIForm(typeof(DoMagic)); };
+			btn.TouchUpInside += async (sender, args) => { await this.MyFormHandler.StartIForm(typeof(DoMagic)); };
 			this.View.AddSubview(formsView);
 			formsView.AddSubview(mainView);
 			mainView.AddSubview(btn);

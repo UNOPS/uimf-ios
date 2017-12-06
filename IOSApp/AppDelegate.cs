@@ -3,7 +3,9 @@ using UIKit;
 
 namespace IOSApp
 {
-	// The UIApplicationDelegate for the application. This class is responsible for launching the 
+    using IOSApp.Controller;
+
+    // The UIApplicationDelegate for the application. This class is responsible for launching the 
 	// User Interface of the application, as well as listening (and optionally responding) to 
 	// application events from iOS.
 	[Register("AppDelegate")]
@@ -16,14 +18,19 @@ namespace IOSApp
 			get;
 			set;
 		}
+	    public RootViewController RootViewController => this.Window.RootViewController as RootViewController;
 
-		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
+	    public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
 		{
-			// Override point for customization after application launch.
-			// If not required for your application you can safely delete this method
+		    this.Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = new RootViewController() };
 
-			return true;
-		}
+		    // If you have defined a root view controller, set it here:
+
+		    // make the window visible
+		    this.Window.MakeKeyAndVisible();
+
+            return true;
+        }
 
 		public override void OnResignActivation(UIApplication application)
 		{
