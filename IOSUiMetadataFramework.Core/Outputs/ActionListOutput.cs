@@ -5,6 +5,7 @@
     using IOSUiMetadataFramework.Core;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using UiMetadataFramework.Basic.Output;
     using UiMetadataFramework.Core;
     using UIKit;
@@ -18,7 +19,7 @@
             object value,
             MyFormHandler myFormHandler,
             FormMetadata formMetadata,
-            List<MyFormHandler.FormInputManager> inputsManager,
+            List<FormInputManager> inputsManager,
             int yAxis)
         {
             this.OutputView = new UIView();
@@ -50,7 +51,9 @@
 
             button.TouchUpInside += (sender, args) =>
             {
-                myFormHandler.StartIFormAsyn(formLink.Form, formLink.InputFieldValues);
+                var formMetadata = myFormHandler.GetFormMetadataAsync(formLink.Form);
+                var action = formLink.Action ?? FormLinkActions.OpenModal;
+                myFormHandler.FormWrapper.UpdateView(myFormHandler, new FormParameter(formMetadata, formLink.InputFieldValues), action);
             };
             return button;
         }

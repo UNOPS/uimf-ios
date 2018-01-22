@@ -5,6 +5,7 @@
     using CoreGraphics;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using IOSUiMetadataFramework.Core.Model.AutoCompleteText;
     using UiMetadataFramework.Basic.Input.Typeahead;
     using UIKit;
@@ -14,8 +15,9 @@
     {
         private AutoCompleteTextField InputText { get; set; }
         private IList<TypeaheadItem<object>> Items { get; set; }
+        private object CustomeSource { get; set; }
 
-        public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+        public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
         {
             this.InputText = new AutoCompleteTextField();
             this.InputText.SetTextBorders();
@@ -23,8 +25,8 @@
             this.InputText.LeftView = paddingView;
             this.InputText.LeftViewMode = UITextFieldViewMode.Always;
             this.Items = new List<TypeaheadItem<object>>();
-            var properties = inputCustomProperties.CastTObject<TypeaheadCustomProperties>();
-            var source = properties.GetTypeaheadSource(myFormHandler);
+            this.CustomeSource = inputCustomProperties.GetCustomProperty<object>("source");
+            var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = "" });
             foreach (var item in source)
             {
                 this.Items.Add(item.CastTObject<TypeaheadItem<object>>());

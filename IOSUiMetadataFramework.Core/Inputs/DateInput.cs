@@ -1,8 +1,10 @@
 ﻿namespace IOSUiMetadataFramework.Core.Inputs
 {
     using System;
+    using System.Collections.Generic;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using UIKit;
 
     [Input(Type = "datetime")]
@@ -10,7 +12,7 @@
     {
         private UIDatePicker dateInput { get; set; }
 
-        public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+        public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
         {
             this.dateInput = new UIDatePicker();
             return this.dateInput;

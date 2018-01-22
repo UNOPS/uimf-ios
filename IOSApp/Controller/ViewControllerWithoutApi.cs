@@ -9,6 +9,7 @@
     using IOSUiMetadataFramework.Core;
     using IOSUiMetadataFramework.Core.Inputs;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using IOSUiMetadataFramework.Core.Outputs;
     using MediatR;
     using MediatR.Pipeline;
@@ -58,8 +59,12 @@
 			UIView formsView = new UIView();
 
 			this.DrawMainScreen(formsView);			
-
-			this.MyFormHandler = new MyFormHandler(this.Container.Resolve<IMediator>(), this.FormRegister, this.InputManager, this.OutputManager);
+            var managers = new ManagersCollection
+            {
+                InputManagerCollection = this.InputManager,
+                OutputManagerCollection = this.OutputManager
+            };
+			this.MyFormHandler = new MyFormHandler(this.Container.Resolve<IMediator>(), this.FormRegister, managers);
 			
 			var backButton = new UIBarButtonItem("Back", UIBarButtonItemStyle.Plain, (sender, args) =>
 			{
@@ -81,11 +86,11 @@
 
 		private void DrawMainScreen(UIView formsView)
 		{
-			UIView mainView = new UIView();
+			var mainView = new UIView();
 			var btn = new UIButton();
 			btn.SetTitle("Do Magic", UIControlState.Normal);
 			btn.BackgroundColor = UIColor.Gray;
-			btn.TouchUpInside += async (sender, args) => { await this.MyFormHandler.StartIForm(typeof(DoMagic)); };
+			btn.TouchUpInside +=   (sender, args) => {  this.MyFormHandler.StartIForm("DoMagic"); };
 			this.View.AddSubview(formsView);
 			formsView.AddSubview(mainView);
 			mainView.AddSubview(btn);

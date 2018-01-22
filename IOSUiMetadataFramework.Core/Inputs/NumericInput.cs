@@ -1,17 +1,19 @@
 ﻿namespace IOSUiMetadataFramework.Core.Inputs
 {
 	using System;
-	using CoreGraphics;
+    using System.Collections.Generic;
+    using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
-	using UIKit;
+    using IOSUiMetadataFramework.Core.Model;
+    using UIKit;
 
 	[Input(Type = "number")]
 	public class NumericInput : IInputManager
 	{
 		private UITextField InputText { get; set; }
 
-		public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+		public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
 		{
 			this.InputText = new UITextField { KeyboardType = UIKeyboardType.NumberPad };
 		    this.InputText.SetTextBorders();			

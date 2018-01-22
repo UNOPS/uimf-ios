@@ -7,6 +7,7 @@
     using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using UiMetadataFramework.Basic.Output;
     using UiMetadataFramework.Core;
 	using UIKit;
@@ -20,7 +21,7 @@
 		    object value,
 		    MyFormHandler myFormHandler,
 		    FormMetadata formMetadata,
-		    List<MyFormHandler.FormInputManager> inputsManager,
+		    List<FormInputManager> inputsManager,
 		    int yAxis)
 		{
 			this.OutputView = new UIView();
@@ -53,8 +54,12 @@
 		           
                     x += (int)tv.Frame.Width;
                     UITapGestureRecognizer gesture = new UITapGestureRecognizer();
-		            gesture.AddTarget(() => myFormHandler.StartIFormAsyn(tab.Form, tab.InputFieldValues)); 
-		            tv.AddGestureRecognizer(gesture);
+                    gesture.AddTarget( () =>
+                    {
+                        var metadata =  myFormHandler.GetFormMetadataAsync(tab.Form);
+                        myFormHandler.FormWrapper.UpdateView(myFormHandler, new FormParameter(metadata, tab.InputFieldValues));
+                    });
+                    tv.AddGestureRecognizer(gesture);
                     if (tab == currentTab)
 		            {
 		                tv.TextColor = UIColor.Black;

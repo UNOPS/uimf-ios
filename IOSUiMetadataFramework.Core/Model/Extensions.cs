@@ -3,7 +3,8 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Drawing;
-	using System.Threading.Tasks;
+    using System.Linq;
+    using System.Threading.Tasks;
 	using Foundation;
 	using IOSUiMetadataFramework.Core.Model;
 	using Newtonsoft.Json;
@@ -112,34 +113,64 @@
 	        label.Frame = labelFrame;
 	    }
 
-	    public static IEnumerable<object> GetTypeaheadSource(this TypeaheadCustomProperties customProperties, MyFormHandler myFormHandler)
-	    {
-	        if (customProperties.Source is string)
-	        {
-	            var dataSource = customProperties.Source.ToString();
-	            var request = new InvokeForm.Request
-	            {
-	                Form = dataSource
-	            };
-	            var result = Task.Run(
-	                () => myFormHandler.InvokeFormAsync(new[] { request }, false));
+        public static IEnumerable<object> GetTypeaheadSource<T>(this object source,
+            MyFormHandler myFormHandler,
+            TypeaheadRequest<T> request = null)
+        {
+            if (source is IEnumerable<object>)
+            {
+                return source.CastTObject<IEnumerable<object>>();
+            }
+            if (request != null)
+            {
+                var list = new Dictionary<string, object> { { "query", request.Query }, { "ids", request.Ids } };
+                var obj = JsonConvert.SerializeObject(list);
 
-	            var response = result.Result;
-	            var typeahead = response[0].Data.CastTObject<TypeaheadResponse<object>>();
-	            if (typeahead != null)
-	            {
-	                return typeahead.Items;
-	            }
-	        }
-	        else
-	        {
-	            return (IEnumerable<object>)customProperties.Source;
+                var dataSource = source.ToString();
+                var formRequest = new InvokeForm.Request
+                {
+                    Form = dataSource,
+                    InputFieldValues = obj
+                };
 
-	        }
-	        return new List<object>();
-	    }
+                try
+                {
+                    var result = Task.Run(
+                        () => myFormHandler.InvokeFormAsync(new[] { formRequest }));
 
-	    public static void SetTextBorders(this UITextField textField)
+                    var response = result.Result;
+
+                    var typeahead = response[0].Data.CastTObject<TypeaheadResponse<object>>();
+
+                    if (typeahead != null)
+                    {
+                        return typeahead.Items;
+                    }
+                }
+                catch (AggregateException ex)
+                {
+                    ex.ThrowInnerException();
+                }
+            }
+            return new List<object>();
+        }
+        public static void ThrowInnerException(this AggregateException exception)
+        {
+            var innerException = exception.InnerExceptions?.FirstOrDefault();
+            if (innerException != null)
+            {
+                throw innerException;
+            }
+            throw exception;
+        }
+        public static T GetCustomProperty<T>(this IDictionary<string, object> customProperties, string property)
+        {
+            var dictionary = new Dictionary<string, object>(customProperties, StringComparer.OrdinalIgnoreCase);
+            dictionary.TryGetValue(property, out var value);
+            return value != null ? value.CastTObject<T>() : default(T);
+        }
+
+        public static void SetTextBorders(this UITextField textField)
 	    {
 	        textField.Layer.CornerRadius = 8;
 	        textField.Layer.BorderColor = UIColor.LightGray.CGColor;

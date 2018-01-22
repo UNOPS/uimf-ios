@@ -1,6 +1,7 @@
 ﻿namespace IOSUiMetadataFramework.Core.Managers
 {
     using System.Collections.Generic;
+    using IOSUiMetadataFramework.Core.Model;
     using UiMetadataFramework.Core;
     using UIKit;
 
@@ -10,6 +11,6 @@
 		    object value,
 		    MyFormHandler myFormHandler,
 		    FormMetadata formMetadata,
-		    List<MyFormHandler.FormInputManager> inputsManager, int yAxis);
+		    List<FormInputManager> inputsManager, int yAxis);
 	}
 }

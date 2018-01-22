@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Foundation;
-using UIKit;
-
-namespace IOSUiMetadataFramework.Core.Model
+﻿namespace IOSUiMetadataFramework.Core.Model
 {
-    using System.Threading.Tasks;
-    using UiMetadataFramework.Core;
+    using UiMetadataFramework.Basic.Response;
 
     public interface IFormWrapper
     {
-        Task UpdateViewAsync(MyFormHandler myFormHandler, FormMetadata metadata, IDictionary<string, object> inputFieldValues = null);
-         void UpdateView(MyFormHandler myFormHandler, FormMetadata metadata, IDictionary<string, object> inputFieldValues = null);
+        void CloseForm();
+        void ReloadView(MyFormHandler myFormHandler, ReloadResponse reloadResponse);
+
+        void UpdateView(MyFormHandler myFormHandler,
+            FormParameter formParameter,
+            string submitAction = null);
     }
 }

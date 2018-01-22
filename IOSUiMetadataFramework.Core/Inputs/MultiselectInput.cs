@@ -17,8 +17,8 @@
 	{
 	    private AutoCompleteTextField InputText { get; set; }
 	    private List<TypeaheadItem<object>> ItemsList { get; set; }
-
-        public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+        private object CustomeSource { get; set; }
+        public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
 	    {
 	        this.InputText = new AutoCompleteTextField
 	        {
@@ -30,10 +30,9 @@
 	        this.InputText.LeftViewMode = UITextFieldViewMode.Always;
 
 	        this.ItemsList = new List<TypeaheadItem<object>>();
-	        var properties = inputCustomProperties.CastTObject<TypeaheadCustomProperties>();
-
-	        var source = properties.GetTypeaheadSource(myFormHandler);
-	        foreach (var item in source)
+            this.CustomeSource = inputCustomProperties.GetCustomProperty<object>("source");
+            var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = "" });
+            foreach (var item in source)
 	        {
 	            this.ItemsList.Add(item.CastTObject<TypeaheadItem<object>>());
 	        }

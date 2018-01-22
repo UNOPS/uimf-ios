@@ -18,12 +18,11 @@
 		private IList<DropdownItem> Items { get; set; }
 	    private UITextField TextField { get; set; }
 
-	    public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+	    public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
 		{
 			this.PickerView = new UIPickerView();
-		    DropdownProperties list = inputCustomProperties.CastTObject<DropdownProperties>();
-		    this.Items = list.Items;
-		    this.Items.Insert(0, new DropdownItem
+            this.Items = inputCustomProperties.GetCustomProperty<IList<DropdownItem>>("items");
+            this.Items.Insert(0, new DropdownItem
 		    {
 		        Label = "",
 		        Value = ""

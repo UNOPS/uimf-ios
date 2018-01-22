@@ -24,7 +24,7 @@
             object value,
             MyFormHandler myFormHandler,
             FormMetadata formMetadata,
-            List<MyFormHandler.FormInputManager> inputsManager,
+            List<FormInputManager> inputsManager,
             int yAxis)
 	    {
 
@@ -32,9 +32,9 @@
 	        this.ItemList = paginatedData.Results.ToList();
 	        this.TotalCount = paginatedData.TotalCount;
 
-	        EnumerableOutputFieldProperties outputFieldProperty = outputField.CustomProperties.CastTObject<EnumerableOutputFieldProperties>();
+            var outputFieldProperty = outputField.CustomProperties.GetCustomProperty<IEnumerable<OutputFieldMetadata>>("columns");
 
-	        this.OutputList = new UIView();
+            this.OutputList = new UIView();
 	        this.OutputList.UserInteractionEnabled = true;
 	        var label = new UITextView { Text = outputField.Label };
 	        var labelSize = new CGSize(UIScreen.MainScreen.Bounds.Width - 40, 30);

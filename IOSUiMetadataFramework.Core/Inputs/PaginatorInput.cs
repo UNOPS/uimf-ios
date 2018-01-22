@@ -1,8 +1,10 @@
 ﻿namespace IOSUiMetadataFramework.Core.Inputs
 {
     using System;
+    using System.Collections.Generic;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using UiMetadataFramework.Basic.Input;
     using UIKit;
 
@@ -15,7 +17,7 @@
         private UITextField PageIndex { get; set; }
         private UITextField PageSize { get; set; }
 
-        public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+        public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
         {
             this.Ascending = new UITextField();
             this.OrderBy = new UITextField();

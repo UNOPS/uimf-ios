@@ -6,12 +6,13 @@
     using CoreGraphics;
     using Foundation;
     using Newtonsoft.Json.Linq;
+    using UiMetadataFramework.Core;
     using UiMetadataFramework.Core.Binding;
     using UIKit;
 
     public class CustomTableViewController<T> : UITableViewSource
     {
-        public CustomTableViewController(List<T> objectList, EnumerableOutputFieldProperties outputFieldProperty, MyFormHandler myFormHandler, UIView view)
+        public CustomTableViewController(List<T> objectList, IEnumerable<OutputFieldMetadata> outputFieldProperty, MyFormHandler myFormHandler, UIView view)
         {
             this.ObjectList = objectList;
             this.OutputFieldProperty = outputFieldProperty;
@@ -25,7 +26,7 @@
 
         public List<T> ObjectList { get; set; }
         private MyFormHandler MyFormHandler { get; }
-        private EnumerableOutputFieldProperties OutputFieldProperty { get; }
+        private IEnumerable<OutputFieldMetadata> OutputFieldProperty { get; }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {          
@@ -34,9 +35,9 @@
                 new UITableViewCell(UITableViewCellStyle.Subtitle, CellIdentifier);
 
             this.CellHeight = 0;
-           
-            var orderedOutputs = this.OutputFieldProperty.Columns.OrderBy(a => a.OrderIndex);
-           
+
+            var orderedOutputs = this.OutputFieldProperty.OrderBy(a => a.OrderIndex);
+
             foreach (var output in orderedOutputs)
             {
                 if (!output.Hidden)
@@ -54,7 +55,7 @@
                     }
                     if (value != null)
                     {
-                        var manager = this.MyFormHandler.OutputManagerCollection.GetManager(output.Type);
+                        var manager = this.MyFormHandler.ManagersCollection.OutputManagerCollection.GetManager(output.Type);
                         var outputView = manager.GetView(output, value, this.MyFormHandler, null, null, (int)this.CellHeight);
                         cell.AddSubview(outputView);
                         this.CellHeight += outputView.Frame.Height + 10;

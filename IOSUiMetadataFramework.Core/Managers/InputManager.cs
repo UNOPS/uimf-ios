@@ -1,10 +1,12 @@
 ﻿namespace IOSUiMetadataFramework.Core.Managers
 {
-	using UIKit;
+    using System.Collections.Generic;
+    using IOSUiMetadataFramework.Core.Model;
+    using UIKit;
 
 	public interface IInputManager
 	{
-		UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler);
+		UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler);
 		object GetValue();
 		void SetValue(object value);
 	}

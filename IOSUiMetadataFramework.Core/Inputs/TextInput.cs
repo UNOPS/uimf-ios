@@ -1,16 +1,18 @@
 ﻿namespace IOSUiMetadataFramework.Core.Inputs
 {
-	using CoreGraphics;
+    using System.Collections.Generic;
+    using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
-	using UIKit;
+    using IOSUiMetadataFramework.Core.Model;
+    using UIKit;
 
 	[Input(Type = "text")]
 	public class TextInput : IInputManager
 	{
 		private UITextField InputText { get; set; }
 
-		public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+		public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
 		{
 			this.InputText = new UITextField();
 		    this.InputText.SetTextBorders();

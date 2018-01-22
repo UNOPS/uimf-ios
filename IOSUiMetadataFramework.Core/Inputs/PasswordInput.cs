@@ -1,8 +1,11 @@
 ﻿namespace IOSUiMetadataFramework.Core.Inputs
 {
+    using System.Collections.Generic;
     using CoreGraphics;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
+    using UiMetadataFramework.Basic.Input;
     using UIKit;
 
     [Input(Type = "password")]
@@ -10,7 +13,7 @@
 	{
 	    private UITextField InputText { get; set; }
 
-	    public UIView GetView(object inputCustomProperties, MyFormHandler myFormHandler)
+	    public UIView GetView(IDictionary<string, object> inputCustomProperties, MyFormHandler myFormHandler)
 	    {
 	        this.InputText = new UITextField { SecureTextEntry = true };
 	        this.InputText.SetTextBorders();
@@ -23,8 +26,11 @@
 
 	    public object GetValue()
 	    {
-	        return this.InputText.Text;
-	    }
+            return new Password
+            {
+                Value = this.InputText.Text
+            };
+        }
 
 	    public void SetValue(object value)
 	    {

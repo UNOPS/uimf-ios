@@ -4,6 +4,7 @@
     using IOSUiMetadataFramework.Core;
     using IOSUiMetadataFramework.Core.Attributes;
     using IOSUiMetadataFramework.Core.Managers;
+    using IOSUiMetadataFramework.Core.Model;
     using Newtonsoft.Json.Linq;
     using UiMetadataFramework.Basic.EventHandlers;
     using UiMetadataFramework.MediatR;
@@ -11,7 +12,7 @@
     [EventHandler(Type = "bind-to-output")]
     public class BindToOutputEventHandler : IEventHandlerManager
     {
-        public void HandleEvent(object inputEventCustomProperties, MyFormHandler.FormInputManager inputManager, InvokeForm.Response result)
+        public void HandleEvent(object inputEventCustomProperties, FormInputManager inputManager, InvokeForm.Response result)
         {
             string outputField;
             if (inputEventCustomProperties.GetType() == typeof(JObject))
@@ -45,5 +46,6 @@
         {
             public string OutputFieldId { get; set; }
         }
+
     }
 }

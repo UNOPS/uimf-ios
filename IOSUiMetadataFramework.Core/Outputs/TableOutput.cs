@@ -20,7 +20,7 @@
 		    object value,
 		    MyFormHandler myFormHandler,
 		    FormMetadata formMetadata,
-		    List<MyFormHandler.FormInputManager> inputsManager,
+		    List<FormInputManager> inputsManager,
 		    int yAxis)
 		{
 			var list = ((IEnumerable<object>)value).ToList();

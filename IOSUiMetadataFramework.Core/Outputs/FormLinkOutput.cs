@@ -7,7 +7,8 @@
 	using Foundation;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
-	using UiMetadataFramework.Basic.Output;
+    using IOSUiMetadataFramework.Core.Model;
+    using UiMetadataFramework.Basic.Output;
 	using UiMetadataFramework.Core;
 	using UIKit;
 
@@ -20,7 +21,7 @@
 		    object value,
 		    MyFormHandler myFormHandler,
 		    FormMetadata formMetadata,
-		    List<MyFormHandler.FormInputManager> inputsManager,
+		    List<FormInputManager> inputsManager,
 		    int yAxis)
 		{
 			var formLink = value.CastTObject<FormLink>();
@@ -33,7 +34,11 @@
 		    };
 
             UITapGestureRecognizer gesture = new UITapGestureRecognizer(); 
-            gesture.AddTarget(() => myFormHandler.StartIFormAsyn(formLink.Form, formLink.InputFieldValues));
+            gesture.AddTarget( () =>
+            {
+                var metadata =  myFormHandler.GetFormMetadataAsync(formLink.Form);
+                myFormHandler.FormWrapper.UpdateView(myFormHandler, new FormParameter(metadata, formLink.InputFieldValues));
+            });
 		    this.OutputView.AddGestureRecognizer(gesture);
             return this.OutputView;
 		}

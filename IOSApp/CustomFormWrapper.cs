@@ -1,30 +1,42 @@
 ﻿namespace IOSApp
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using CoreGraphics;
     using IOSApp.Controller;
-    using IOSUiMetadataFramework.Core;
     using IOSUiMetadataFramework.Core.Model;
-    using SidebarNavigation;
-    using UiMetadataFramework.Core;
+    using UiMetadataFramework.Basic.Response;
     using UIKit;
 
     public class CustomFormWrapper : IFormWrapper
     {
-        public CustomFormWrapper(UIViewController navController)
+        public CustomFormWrapper(SideMenuController sideMenuController, UIViewController navController)
         {
             this.ViewController = navController;
+            this.SideMenuController = sideMenuController;
         }
+
+        public SideMenuController SideMenuController { get; set; }
 
         public UIViewController ViewController { get; set; }
 
-        public async Task UpdateViewAsync(MyFormHandler myFormHandler, FormMetadata metadata, IDictionary<string, object> inputFieldValues = null)
+        public void CloseForm()
+        {
+            var bar = this.ViewController as UINavigationController;
+            bar?.PopViewController(false);
+        }
+
+        public void ReloadView(MyFormHandler myFormHandler, ReloadResponse reloadResponse)
+        {
+            var allForms = this.SideMenuController.Reload();
+            var metadata = allForms[reloadResponse.Form];
+            this.UpdateView(myFormHandler, new FormParameter(metadata, reloadResponse.InputFieldValues));
+        }
+
+        public void UpdateView(MyFormHandler myFormHandler, FormParameter formParameter, string submitAction = null)
         {
             try
             {
-                var layout = await myFormHandler.GetIFormAsync(metadata, inputFieldValues);
+                var layout = myFormHandler.GetIFormAsync(formParameter.Form, formParameter.Parameters);
                 var contentController = new ViewController();
                 var size = new CGSize(UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height);
                 layout.View.Frame = new CGRect(new CGPoint(0, 0), size);
@@ -37,12 +49,6 @@
             {
                 myFormHandler.ShowToast(ex.Message);
             }
-           
-        }
-
-        public void UpdateView(MyFormHandler myFormHandler, FormMetadata metadata, IDictionary<string, object> inputFieldValues = null)
-        {
-            throw new NotImplementedException();
         }
     }
 }

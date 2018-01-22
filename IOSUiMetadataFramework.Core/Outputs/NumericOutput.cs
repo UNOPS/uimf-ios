@@ -4,7 +4,8 @@
     using CoreGraphics;
 	using IOSUiMetadataFramework.Core.Attributes;
 	using IOSUiMetadataFramework.Core.Managers;
-	using UiMetadataFramework.Core;
+    using IOSUiMetadataFramework.Core.Model;
+    using UiMetadataFramework.Core;
 	using UIKit;
 
 	[Output(Type = "number")]
@@ -16,7 +17,7 @@
 		    object value,
 		    MyFormHandler myFormHandler,
 		    FormMetadata formMetadata,
-		    List<MyFormHandler.FormInputManager> inputsManager,
+		    List<FormInputManager> inputsManager,
 		    int yAxis)
 		{
 			this.OutputText = new UITextView();
