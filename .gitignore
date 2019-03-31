@@ -1,0 +1,10 @@
+.vs/
+App.Core/bin/
+App.Core/obj/project.assets.json
+App.Core/obj/App.Core.csproj.nuget.g.targets
+App.Core/obj/
+IOSApp/bin/
+IOSApp/obj/
+IOSUiMetadataFramework.Core/bin/
+IOSUiMetadataFramework.Core/obj/
+packages/
