@@ -26,11 +26,18 @@
             this.InputText.LeftViewMode = UITextFieldViewMode.Always;
             this.Items = new List<TypeaheadItem<object>>();
             this.CustomeSource = inputCustomProperties.GetCustomProperty<object>("source");
-            var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = "" });
-            foreach (var item in source)
+
+            this.InputText.EditingChanged += (sender, args) =>
             {
-                this.Items.Add(item.CastTObject<TypeaheadItem<object>>());
-            }
+                var query = this.InputText.Text.ToString().Split(',').Last().Trim();
+                var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = "" });
+                foreach (var item in source)
+                {
+                    this.Items.Add(item.CastTObject<TypeaheadItem<object>>());
+                }
+
+            };
+         
             this.InputText.Setup(this.Items.Select(a => a.Label).ToList());
 
             return this.InputText;

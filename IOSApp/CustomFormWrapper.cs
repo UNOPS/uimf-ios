@@ -27,6 +27,8 @@
 
         public void ReloadView(MyFormHandler myFormHandler, ReloadResponse reloadResponse)
         {
+            var bar = this.ViewController as UINavigationController;
+            bar?.PopToRootViewController(false);
             var allForms = this.SideMenuController.Reload();
             var metadata = allForms[reloadResponse.Form];
             this.UpdateView(myFormHandler, new FormParameter(metadata, reloadResponse.InputFieldValues));
@@ -36,14 +38,18 @@
         {
             try
             {
-                var layout = myFormHandler.GetIFormAsync(formParameter.Form, formParameter.Parameters);
-                var contentController = new ViewController();
-                var size = new CGSize(UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height);
-                layout.View.Frame = new CGRect(new CGPoint(0, 0), size);
-                // layout.View.FillParent(contentController.View);
-                contentController.View = layout.View;
-                var bar = this.ViewController as UINavigationController;
-                bar?.PushViewController(contentController, false);
+                var layout = myFormHandler.GetIFormAsync(formParameter, submitAction);
+                if (layout != null)
+                {
+                    var contentController = new ViewController();
+                    var size = new CGSize(UIScreen.MainScreen.Bounds.Width, UIScreen.MainScreen.Bounds.Height);
+                    layout.View.Frame = new CGRect(new CGPoint(0, 0), size);
+                    // layout.View.FillParent(contentController.View);
+                    contentController.View = layout.View;
+                    var bar = this.ViewController as UINavigationController;
+                    bar?.PushViewController(contentController, false);
+                }
+
             }
             catch (Exception ex)
             {

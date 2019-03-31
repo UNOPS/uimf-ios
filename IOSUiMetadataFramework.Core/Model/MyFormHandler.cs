@@ -78,24 +78,23 @@
             return formMetadata;
         }
 
-        public Layout GetIFormAsync(string form, IDictionary<string, object> inputFieldValues = null)
+        public Layout GetIFormAsync(string form, IDictionary<string, object> inputFieldValues = null, string submitAction = null)
         {
-            FormMetadata formMetadata = this.GetFormMetadataAsync(form);
-            var layout = this.GetIFormAsync(formMetadata, inputFieldValues);
+            var formMetadata = this.GetFormMetadataAsync(form);
+            var layout = this.GetIFormAsync(new FormParameter(formMetadata, inputFieldValues), submitAction);
             return layout;
         }
 
-        public Layout GetIFormAsync(FormMetadata formMetadata, IDictionary<string, object> inputFieldValues = null)
+        public Layout GetIFormAsync(FormParameter formParameter, string submitAction = null)
         {
-            if (formMetadata == null)
+            if (formParameter.Form == null)
             {
                 this.ShowToast("You don't have access to this form");
                 return null;
             }
             try
             {
-                var formParameters = new FormParameter(formMetadata, inputFieldValues);
-                var layout = this.RenderFormAsync(formParameters);
+                var layout = this.RenderFormAsync(formParameter, submitAction);
                 return layout;
             }
             catch (Exception ex)
@@ -226,11 +225,10 @@
             return JsonConvert.SerializeObject(list);
         }
 
-        private async Task<InvokeForm.Response> HandleFormAsync(FormMetadata formMetadata, List<FormInputManager> inputsManager)
+        private async Task<InvokeForm.Response> HandleFormAsync(FormMetadata formMetadata, List<FormInputManager> inputsManager, object obj)
         {
             try
             {
-                var obj = this.GetFormValues(inputsManager);
                 var request = new InvokeForm.Request
                 {
                     Form = formMetadata.Id,
@@ -250,7 +248,7 @@
                 }
                 else
                 {
-                    InvokeForm.Response response = await this.Mediator.Send(request);
+                    var response = await this.Mediator.Send(request);
                     resultData = response.Data;
                 }
 
@@ -271,7 +269,6 @@
 
         private Layout RenderFormAsync(FormParameter formParameters, string submitAction = null)
         {
-            UIApplication.EnsureUIThread();
             this.YAxis = 10;
             var scrollView = new UIScrollView { BackgroundColor = UIColor.White };
             var frame = scrollView.Frame;
@@ -280,7 +277,7 @@
                 InvokeForm.Response result = null;
                 var resultLayout = new UIView();
                 resultLayout.AddSubview(new UIView());
-                List<FormInputManager> inputsManager = new List<FormInputManager>();
+                var inputsManager = new List<FormInputManager>();
                 if (formParameters.Form.InputFields.Count > 0)
                 {
                     this.RenderInputs(scrollView, formParameters, inputsManager);
@@ -321,27 +318,24 @@
                 // run on response handled events
                 EventsManager.OnFormLoadedEvent(formParameters);
 
-                if (formParameters.Form.PostOnLoad)
+                if (formParameters.Form.PostOnLoad || submitAction == FormLinkActions.Run)
                 {
-                    if (formParameters.Form.PostOnLoad || submitAction == FormLinkActions.Run)
+                    try
                     {
-                        try
-                        {
-                            result = this.SubmitForm(resultLayout, formParameters.Form, inputsManager,
-                                formParameters.Form.PostOnLoadValidation);
-                        }
-                        catch (AggregateException ex)
-                        {
-                            ex.ThrowInnerException();
-                        }
-
-                        if (submitAction == FormLinkActions.Run)
-                        {
-                            this.FormWrapper.CloseForm();
-                            return null;
-                        }
-                        this.RenderOutput(resultLayout, result, formParameters.Form, inputsManager);
+                        result = this.SubmitForm(resultLayout, formParameters.Form, inputsManager,
+                            formParameters.Form.PostOnLoadValidation);
                     }
+                    catch (AggregateException ex)
+                    {
+                        ex.ThrowInnerException();
+                    }
+
+                    if (submitAction == FormLinkActions.Run)
+                    {
+                        this.FormWrapper.CloseForm();
+                        return null;
+                    }
+                    this.RenderOutput(resultLayout, result, formParameters.Form, inputsManager);
                 }
 
                 resultLayout.UserInteractionEnabled = true;
@@ -403,7 +397,8 @@
             var valid = this.CheckValidation(resultLayout, inputsManager, validate);
             if (valid)
             {
-                var taskToRun = Task.Run(() => this.HandleFormAsync(formMetadata, inputsManager));
+                var obj = this.GetFormValues(inputsManager);
+                var taskToRun = Task.Run(() => this.HandleFormAsync(formMetadata, inputsManager, obj));
 
                 return taskToRun.Result;
             }
@@ -418,7 +413,8 @@
             var valid = this.CheckValidation(resultLayout, inputsManager, validate);
             if (valid)
             {
-                return await this.HandleFormAsync(formMetadata, inputsManager);
+                var obj = this.GetFormValues(inputsManager);
+                return await this.HandleFormAsync(formMetadata, inputsManager, obj);
             }
             return null;
         }

@@ -25,17 +25,23 @@
 	            SelectionMode = AutoCompleteTextMode.MultiChoice
 	        };
             this.InputText.SetTextBorders();
-	        UIView paddingView = new UIView(new CGRect(0, 0, 10, 20));
+	        var paddingView = new UIView(new CGRect(0, 0, 10, 20));
 	        this.InputText.LeftView = paddingView;
 	        this.InputText.LeftViewMode = UITextFieldViewMode.Always;
 
 	        this.ItemsList = new List<TypeaheadItem<object>>();
             this.CustomeSource = inputCustomProperties.GetCustomProperty<object>("source");
-            var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = "" });
-            foreach (var item in source)
-	        {
-	            this.ItemsList.Add(item.CastTObject<TypeaheadItem<object>>());
-	        }
+            this.InputText.EditingChanged += (sender, args) =>
+            {
+                var query = this.InputText.Text.ToString().Split(',').Last().Trim();
+                var source = this.CustomeSource.GetTypeaheadSource(myFormHandler, new TypeaheadRequest<object> { Query = query });
+                foreach (var item in source)
+                {
+                    this.ItemsList.Add(item.CastTObject<TypeaheadItem<object>>());
+                }
+
+            };
+           
 	        this.InputText.Setup(this.ItemsList.Select(a => a.Label).ToList());
 
             return this.InputText;

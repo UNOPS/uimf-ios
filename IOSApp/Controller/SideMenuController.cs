@@ -67,74 +67,83 @@
             this.AllForms = new Dictionary<string, FormMetadata>();
             var userDefaults = NSUserDefaults.StandardUserDefaults;
             this.MenuItems = new List<FormMetadata>();
-            var result = Task.Run(
-                () => UiMetadataHttpRequestHelper.GetAllFormsMetadata(this.UiMetadataWebApi.MetadataUrl, userDefaults.StringForKey("Cookies")));
-            var metadata = JsonConvert.DeserializeObject<MyForms>(result.Result);
-            var orderedMenu = metadata.Menus.OrderBy(a => a.OrderIndex);
-            var orderedForms = metadata.Forms
-                .OrderBy(a => a.CustomProperties != null ? a.CustomProperties?.GetCustomProperty<long>("menuOrderIndex") : 0)
-                .ToList();
-            
-            var y = 50;
 
-            foreach (var menuItem in orderedMenu)
+            try
             {
-                var existingForms = false;
-                foreach (var form in orderedForms)
+                var result = Task.Run(
+              () => UiMetadataHttpRequestHelper.GetAllFormsMetadata(this.UiMetadataWebApi.MetadataUrl, userDefaults.StringForKey("Cookies")));
+                var metadata = JsonConvert.DeserializeObject<MyForms>(result.Result);
+                var orderedMenu = metadata.Menus.OrderBy(a => a.OrderIndex);
+                var orderedForms = metadata.Forms
+                    .OrderBy(a => a.CustomProperties != null ? a.CustomProperties?.GetCustomProperty<long>("menuOrderIndex") : 0)
+                    .ToList();
+
+                var y = 50;
+
+                foreach (var menuItem in orderedMenu)
                 {
-                    if (form.CustomProperties != null && this.MenuItems.All(a => a != form))
+                    var existingForms = false;
+                    foreach (var form in orderedForms)
                     {
-                        var menuName = form.CustomProperties.GetCustomProperty<string>("menu");
-                        if (!string.IsNullOrEmpty(menuItem.Name))
+                        if (form.CustomProperties != null && this.MenuItems.All(a => a != form))
                         {
-                            if (menuName != null && (menuName.Equals(menuItem.Name) || menuName == ""))
+                            var menuName = form.CustomProperties.GetCustomProperty<string>("menu");
+                            if (!string.IsNullOrEmpty(menuItem.Name))
                             {
-                                if (!existingForms && menuName != "")
+                                if (menuName != null && (menuName.Equals(menuItem.Name) || menuName == ""))
                                 {
-                                    var menuTitle = new UILabel(new RectangleF(15, y, 270, 20))
+                                    if (!existingForms && menuName != "")
                                     {
-                                        Font = UIFont.SystemFontOfSize(18.0f),
-                                        TextAlignment = UITextAlignment.Left,
-                                        TextColor = UIColor.Black,
-                                        Text = menuItem.Name
+                                        var menuTitle = new UILabel(new RectangleF(15, y, 270, 20))
+                                        {
+                                            Font = UIFont.SystemFontOfSize(18.0f),
+                                            TextAlignment = UITextAlignment.Left,
+                                            TextColor = UIColor.Black,
+                                            Text = menuItem.Name
+                                        };
+                                        this.ScrollView.Add(menuTitle);
+                                        y += 55;
+                                    }
+                                    existingForms = true;
+                                    this.MenuItems.Add(form);
+                                    var contentButton = new UIButton(UIButtonType.System) { Frame = new RectangleF(30, y, 260, 20) };
+                                    contentButton.SetTitle(form.Label, UIControlState.Normal);
+                                    contentButton.HorizontalAlignment = UIControlContentHorizontalAlignment.Left;
+
+                                    contentButton.TouchUpInside += (o, e) =>
+                                    {
+
+                                        this.Wrapper.UpdateView(this.MyFormHandler, new FormParameter(form));
+
+                                        this.SidebarController.CloseMenu();
+                                        // this.SidebarController.ChangeContentView(new IntroController());
                                     };
-                                    this.ScrollView.Add(menuTitle);
-                                    y += 55;
+
+                                    this.ScrollView.Add(contentButton);
+                                    y += 50;
                                 }
-                                existingForms = true;
-                                this.MenuItems.Add(form);
-                                var contentButton = new UIButton(UIButtonType.System) { Frame = new RectangleF(30, y, 260, 20) };
-                                contentButton.SetTitle(form.Label, UIControlState.Normal);
-                                contentButton.HorizontalAlignment = UIControlContentHorizontalAlignment.Left;
-
-                                contentButton.TouchUpInside += (o, e) =>
-                                {
-    
-                                    this.Wrapper.UpdateView(this.MyFormHandler, new FormParameter(form));
- 
-                                    this.SidebarController.CloseMenu();
-                                    // this.SidebarController.ChangeContentView(new IntroController());
-                                };
-
-                                this.ScrollView.Add(contentButton);
-                                y += 50;
                             }
                         }
-                    }
-                    if (!this.AllForms.ContainsKey(form.Id))
-                    {
-                        this.AllForms.Add(form.Id, form);
-                    }
+                        if (!this.AllForms.ContainsKey(form.Id))
+                        {
+                            this.AllForms.Add(form.Id, form);
+                        }
 
-                    if (!this.MyFormHandler.AllFormsMetadata.ContainsKey(form.Id))
-                    {
-                        this.MyFormHandler.AllFormsMetadata.Add(form.Id, form);
+                        if (!this.MyFormHandler.AllFormsMetadata.ContainsKey(form.Id))
+                        {
+                            this.MyFormHandler.AllFormsMetadata.Add(form.Id, form);
+                        }
                     }
                 }
+                var frame = this.ScrollView.Frame;
+                frame.Height = y + 50;
+                this.ScrollView.ContentSize = frame.Size;
             }
-            var frame = this.ScrollView.Frame;
-            frame.Height = y+50;
-            this.ScrollView.ContentSize = frame.Size;
+            catch (System.Exception)
+            {
+                this.MyFormHandler.ShowToast("Server is not available in this moment");
+            }
+          
         }
 
         public Dictionary<string, FormMetadata> Reload()

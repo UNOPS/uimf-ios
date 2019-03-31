@@ -3,16 +3,17 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using CoreGraphics;
     using Foundation;
     using Newtonsoft.Json.Linq;
     using UiMetadataFramework.Core;
-    using UiMetadataFramework.Core.Binding;
     using UIKit;
 
     public class CustomTableViewController<T> : UITableViewSource
     {
-        public CustomTableViewController(List<T> objectList, IEnumerable<OutputFieldMetadata> outputFieldProperty, MyFormHandler myFormHandler, UIView view)
+        public CustomTableViewController(List<T> objectList,
+            IEnumerable<OutputFieldMetadata> outputFieldProperty,
+            MyFormHandler myFormHandler,
+            UIView view)
         {
             this.ObjectList = objectList;
             this.OutputFieldProperty = outputFieldProperty;
@@ -21,15 +22,17 @@
         }
 
         public nfloat CellHeight { get; set; }
+
+        public List<T> ObjectList { get; set; }
+
         //public nfloat TableHeight { get; set; } = 0;
         public UIView View { get; set; }
 
-        public List<T> ObjectList { get; set; }
         private MyFormHandler MyFormHandler { get; }
         private IEnumerable<OutputFieldMetadata> OutputFieldProperty { get; }
 
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
-        {          
+        {
             string CellIdentifier = "TableCell";
             UITableViewCell cell = tableView.DequeueReusableCell(CellIdentifier) ??
                 new UITableViewCell(UITableViewCellStyle.Subtitle, CellIdentifier);
